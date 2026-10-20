@@ -79,23 +79,27 @@ def main(page):
     def delete_all(event):
         result.value = ' '
         page.update()
-
-    def get_result(event):
-        try:
-            result.value = str(eval(result.value))
-        except SyntaxError:
-            result.value = "Unknown operation"
-            page.update()
-            sleep(1.5)
-            result.value = ''
-        except ZeroDivisionError:
-            result.value = "Can't division by zero"
-            page.update()
-            sleep(1.5)
-            result.value = ''
+        
+    def show_error(error_text, u_value) -> None:
+        result.value = error_text
+        page.update()
+        sleep(1.5)
+        result.value = u_value
         page.update()
 
-    result = ft.Text(f'{''}')
+    def get_result(event) -> None:
+        u_value = result.value
+        errors_dict = {
+            SyntaxError: "Unknown operation",
+            ZeroDivisionError: "Can't division by zero"
+        }
+        try:
+            result.value = str(eval(u_value))
+        except (SyntaxError, ZeroDivisionError) as error:
+            show_error(errors_dict.get(type(error)), u_value)
+        
+        
+    result = ft.Text('')
 
     button_1 = create_btn('1', get_number_1)
     button_2 = create_btn('2', get_number_2)
